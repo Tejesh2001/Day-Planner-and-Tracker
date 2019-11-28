@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Where are you going ?"
+            android:textSize="36sp" />
+
+        <EditText
+            android:id="@+id/location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Please enter location"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Please enter the date" />
+
+        <EditText
+            android:id="@+id/date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="date"
+            android:text="12" />
+
+        <Button
+            android:id="@+id/enter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enter" />
+
+        <EditText
+            android:id="@+id/purpose"
+            android:layout_width="match_parent"
+            android:layout_height="110dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="What is the purpose of your visit? "
+            android:textSize="24sp" />
+
+        <Button
+            android:id="@+id/Clubbing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Clubbing/Bar hopping" />
+
+        <Button
+            android:id="@+id/eat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Eating out" />
+
+        <Button
+            android:id="@+id/festival"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Festival" />
+
+        <Button
+            android:id="@+id/socializing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Socializing" />
+
+        <Button
+            android:id="@+id/Academics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Academics" />
+
+        <com.jjoe64.graphview.GraphView
+            android:layout_width="match_parent"
+            android:layout_height="200dip"
+            android:id="@+id/graph" />
+
+    </LinearLayout>
+</ScrollView>
