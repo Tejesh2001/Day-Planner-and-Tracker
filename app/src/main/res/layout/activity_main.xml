@@ -28,20 +28,6 @@
             android:text="Please enter location"
             android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Please enter the date" />
-
-        <EditText
-            android:id="@+id/date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="date"
-            android:text="12" />
-
         <Button
             android:id="@+id/enter"
             android:layout_width="match_parent"
@@ -86,11 +72,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Academics" />
-
-        <com.jjoe64.graphview.GraphView
-            android:layout_width="match_parent"
-            android:layout_height="200dip"
-            android:id="@+id/graph" />
 
     </LinearLayout>
 </ScrollView>
