@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         categories = new ArrayList<>();
 
 
-        Button enter = findViewById(R.id.enter);
+        //Button enter = findViewById(R.id.enter);
         location = findViewById(R.id.location);
         club = findViewById(R.id.Clubbing);
 
