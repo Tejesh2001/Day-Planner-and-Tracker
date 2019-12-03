@@ -71,16 +71,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Academics" />
-        <fragment android:id="@+id/autocomplete_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-            />
 
         <com.jjoe64.graphview.GraphView
             android:id="@+id/graphnew"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
 
     </LinearLayout>
 </ScrollView>
