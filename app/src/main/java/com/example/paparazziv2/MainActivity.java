@@ -5,36 +5,31 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.ValueDependentColor;
-import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.BarGraphSeries;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.DataPointInterface;
-import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements Serializable {
-    private TextView location;
+//1. Save state of activities after ending them. Bar graphs not forming.
+//2. Add polylines ( I know how to do just need to save the states
+//3. After a day passes the lines get drawn automatically. So after each day the lines drawn are shown.
+
+
+
+public class MainActivity extends AppCompatActivity {
+    private EditText location;
     private Button club, eat, festival, social, acad;
     private List<String> categories;
     private List<Integer> clubdate, eatdate, socialdate, acaddate, festivaldate;
 
     private int a, b, c, d, e;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,21 +39,26 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         categories = new ArrayList<>();
 
 
-        //Button enter = findViewById(R.id.enter);
+        Button enter = findViewById(R.id.enter);
         location = findViewById(R.id.location);
         club = findViewById(R.id.Clubbing);
 
+
         Intent intent = new Intent(this, GraphActivitynew.class);
-        Intent intentmap = new Intent(this, MapActivityreal.class);
+        Intent intentmap = new Intent(this, MapsActivity.class);
+
+        enter.setOnClickListener( view -> {
+            intentmap.putExtra("Location", location.getText().toString());
+            startActivity(intentmap);
+        });
 
 
 
-        intentmap.putExtra("Location", location.getText().toString());
 
         club.setOnClickListener(v -> {
             intent.putExtra("Button", club.getText().toString());
-
-
+            a++;
+            intent.putExtra("a", a);
             startActivity(intent);
 
 
@@ -67,7 +67,9 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         eat.setOnClickListener(v -> {
 
             intent.putExtra("Button", eat.getText().toString());
+            b++;
 
+            intent.putExtra("b", b);
 
             startActivity(intent);
 
@@ -76,7 +78,9 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         festival = findViewById(R.id.festival);
         festival.setOnClickListener(v -> {
             intent.putExtra("Button", festival.getText().toString());
+            c++;
 
+            intent.putExtra("c", c);
             startActivity(intent);
 
 
@@ -86,20 +90,33 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         social.setOnClickListener(v -> {
 
             intent.putExtra("Button", social.getText().toString());
+            d++;
 
+            intent.putExtra("d", d);
             startActivity(intent);
 
         });
         acad = findViewById(R.id.Academics);
         acad.setOnClickListener(v -> {
 
-
+            e++;
             intent.putExtra("Button", acad.getText().toString());
+
+            intent.putExtra("e", e);
 
             startActivity(intent);
 
 
         });
+        //GraphView graphView = findViewById(R.id.graphnew);
+        //Intent i = getIntent();
+        //Gson g = new Gson();
+        //String s = i.getStringExtra("Series");
+        //BarGraphSeries ob = g.fromJson(s, BarGraphSeries.class);
+
+        //graphView.addSeries(ob);
+
+
 
 
     }

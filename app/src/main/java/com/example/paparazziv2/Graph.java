@@ -1,32 +1,15 @@
 package com.example.paparazziv2;
 
-import android.annotation.SuppressLint;
-
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.EditText;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonParser;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.ValueDependentColor;
-import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.Series;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +30,7 @@ public class Graph extends AppCompatActivity {
 
         setContentView(R.layout.activity_graph);
         //GraphView graph = findViewById(R.id.graph);
-        GraphView graph = findViewById(R.id.graph);
+        GraphView graph = findViewById(R.id.graphnew);
         String button = getIntent().getStringExtra("Button");
         clubdate = new ArrayList<>();
         eatdate = new ArrayList<>();
