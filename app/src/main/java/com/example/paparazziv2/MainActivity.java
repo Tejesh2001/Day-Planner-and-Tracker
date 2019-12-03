@@ -21,8 +21,6 @@ import java.util.List;
 //2. Add polylines ( I know how to do just need to save the states
 //3. After a day passes the lines get drawn automatically. So after each day the lines drawn are shown.
 
-
-
 public class MainActivity extends AppCompatActivity {
     private EditText location;
     private Button club, eat, festival, social, acad;
@@ -38,29 +36,23 @@ public class MainActivity extends AppCompatActivity {
 
         categories = new ArrayList<>();
 
-
         Button enter = findViewById(R.id.enter);
         location = findViewById(R.id.location);
         club = findViewById(R.id.Clubbing);
 
-
         Intent intent = new Intent(this, GraphActivitynew.class);
-        Intent intentmap = new Intent(this, MapsActivity.class);
+        Intent intentMap = new Intent(this, MapsActivity.class);
 
         enter.setOnClickListener( view -> {
-            intentmap.putExtra("Location", location.getText().toString());
-            startActivity(intentmap);
+            intentMap.putExtra("Location", location.getText().toString());
+            startActivity(intentMap);
         });
-
-
-
 
         club.setOnClickListener(v -> {
             intent.putExtra("Button", club.getText().toString());
             a++;
             intent.putExtra("a", a);
             startActivity(intent);
-
 
         });
         eat = findViewById(R.id.eat);
@@ -73,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
 
             startActivity(intent);
 
-
         });
+
         festival = findViewById(R.id.festival);
         festival.setOnClickListener(v -> {
             intent.putExtra("Button", festival.getText().toString());
@@ -83,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("c", c);
             startActivity(intent);
 
-
         });
+
         social = findViewById(R.id.socializing);
 
         social.setOnClickListener(v -> {
