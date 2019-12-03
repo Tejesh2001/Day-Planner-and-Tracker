@@ -81,7 +81,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         JsonArray presets = jsonObject.get("presets").getAsJsonArray();
                         JsonElement campus = presets.get(1);
                         JsonArray loc = campus.getAsJsonObject().get("targets").getAsJsonArray();
-                        System.out.println(s + "     Location new");
+
 
 
                         for (JsonElement i : loc) {
