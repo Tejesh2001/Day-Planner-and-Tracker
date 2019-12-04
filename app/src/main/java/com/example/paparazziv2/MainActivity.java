@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity {
         Button enter = findViewById(R.id.enter);
         location = findViewById(R.id.location);
         club = findViewById(R.id.Clubbing);
-
-        Intent intent = new Intent(this, GraphActivitynew.class);
         Intent intentMap = new Intent(this, MapsActivity.class);
 
         enter.setOnClickListener(view -> {
@@ -65,15 +63,9 @@ public class MainActivity extends AppCompatActivity {
     private void init(){
         //declare the xySeries Object
         series = new PointsGraphSeries<>();
-        club = findViewById(R.id.Clubbing);
-
-        Intent intent = new Intent(this, GraphActivitynew.class);
-
 
         club.setOnClickListener(v -> {
-            intent.putExtra("Button", club.getText().toString());
             a++;
-            intent.putExtra("a", a);
             xy.add(new values(1, a));
             init();
 
@@ -83,13 +75,9 @@ public class MainActivity extends AppCompatActivity {
         });
         eat = findViewById(R.id.eat);
         eat.setOnClickListener(v -> {
-
-            intent.putExtra("Button", eat.getText().toString());
             b++;
             xy.add(new values(2, b));
 
-
-            intent.putExtra("b", b);
             init();
             // series.appendData(new DataPoint(1, b), true, 31);
 
@@ -100,12 +88,10 @@ public class MainActivity extends AppCompatActivity {
 
         festival = findViewById(R.id.festival);
         festival.setOnClickListener(v -> {
-            intent.putExtra("Button", festival.getText().toString());
             c++;
             xy.add(new values(3, c));
 
 
-            intent.putExtra("c", c);
             init();
             // series.appendData(new DataPoint(2, c), true, 31);
 
@@ -117,14 +103,12 @@ public class MainActivity extends AppCompatActivity {
 
         social.setOnClickListener(v -> {
 
-            intent.putExtra("Button", social.getText().toString());
             d++;
             xy.add(new values(4, d));
 
 
             //series.appendData(new DataPoint(3, d), true, 31);
 
-            intent.putExtra("d", d);
             init();
             //startActivity(intent);
 
@@ -133,9 +117,7 @@ public class MainActivity extends AppCompatActivity {
         acad.setOnClickListener(v -> {
 
             e++;
-            intent.putExtra("Button", acad.getText().toString());
 
-            intent.putExtra("e", e);
             xy.add(new values(5, e));
             init();
 
