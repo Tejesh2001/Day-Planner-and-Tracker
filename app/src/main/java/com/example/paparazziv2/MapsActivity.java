@@ -30,6 +30,7 @@ import com.google.gson.JsonParser;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+
     private GoogleMap mMap;
     private String s;
     private LatLng position;
