@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("Button", club.getText().toString());
             a++;
             intent.putExtra("a", a);
-            xy.add(new values(0, a));
+            xy.add(new values(1, a));
             init();
 
 
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
             intent.putExtra("Button", eat.getText().toString());
             b++;
-            xy.add(new values(1, b));
+            xy.add(new values(2, b));
 
 
             intent.putExtra("b", b);
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         festival.setOnClickListener(v -> {
             intent.putExtra("Button", festival.getText().toString());
             c++;
-            xy.add(new values(2, c));
+            xy.add(new values(3, c));
 
 
             intent.putExtra("c", c);
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
             intent.putExtra("Button", social.getText().toString());
             d++;
-            xy.add(new values(3, d));
+            xy.add(new values(4, d));
 
 
             //series.appendData(new DataPoint(3, d), true, 31);
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("Button", acad.getText().toString());
 
             intent.putExtra("e", e);
-            xy.add(new values(4, e));
+            xy.add(new values(5, e));
             init();
 
 
@@ -175,12 +175,12 @@ public class MainActivity extends AppCompatActivity {
         //set manual x bounds
         graphView.getViewport().setYAxisBoundsManual(true);
         graphView.getViewport().setMaxY(150);
-        graphView.getViewport().setMinY(-150);
+        graphView.getViewport().setMinY(0);
 
         //set manual y bounds
         graphView.getViewport().setXAxisBoundsManual(true);
-        graphView.getViewport().setMaxX(150);
-        graphView.getViewport().setMinX(-150);
+        graphView.getViewport().setMaxX(6);
+        graphView.getViewport().setMinX(0);
 
         graphView.addSeries(series);
         //String s = i.getStringExtra("Series");
