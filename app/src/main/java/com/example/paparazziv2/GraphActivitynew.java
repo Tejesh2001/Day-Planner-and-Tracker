@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.contentcapture.DataRemovalRequest;
 import android.widget.Button;
 
 import com.google.gson.Gson;
@@ -12,6 +13,7 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.ValueDependentColor;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +23,9 @@ public class GraphActivitynew extends AppCompatActivity {
 
     private Button club, eat, festival, social, acad;
     private List<String> categories;
-    private List<Integer> clubdate, eatdate, socialdate, acaddate, festivaldate;
+    private ArrayList<values>  xy;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,12 +38,8 @@ public class GraphActivitynew extends AppCompatActivity {
         int d = getIntent().getIntExtra("d", 0);
         int e = getIntent().getIntExtra("e", 0);
         categories = new ArrayList<>();
-
-
-
-
-
-        BarGraphSeries series = new BarGraphSeries<>((new DataPoint[]{}));
+        PointsGraphSeries series = new PointsGraphSeries<>();
+        xy = new ArrayList<>();
 
 
         if (button.equals("Clubbing/Bar hopping")) {
@@ -47,8 +47,9 @@ public class GraphActivitynew extends AppCompatActivity {
             //lmao
 
             categories.add(button);
+            xy.add(new values(0, a));
+                    series.appendData(new DataPoint(0, a), true, 31);
 
-            series.appendData(new DataPoint(0, a), true, 31);
 
         }
 
@@ -56,7 +57,7 @@ public class GraphActivitynew extends AppCompatActivity {
         if (button.equals("Eating out")) {
 
             categories.add(button);
-            series.appendData(new DataPoint(1, b ), true, 31);
+            series.appendData(new DataPoint(1, b), true, 31);
 
 
         }
@@ -64,7 +65,7 @@ public class GraphActivitynew extends AppCompatActivity {
             categories.add(button);
 
 
-            series.appendData(new DataPoint(2, c ), true, 31) ;
+            series.appendData(new DataPoint(2, c), true, 31);
 
         }
 
@@ -73,7 +74,7 @@ public class GraphActivitynew extends AppCompatActivity {
 
             categories.add(button);
 
-            series.appendData(new DataPoint(3, d ), true, 31);
+            series.appendData(new DataPoint(3, d), true, 31);
 
         }
         if (button.equals("Academics")) {
@@ -82,7 +83,7 @@ public class GraphActivitynew extends AppCompatActivity {
             categories.add(button);
 
 
-            series.appendData(new DataPoint(4, e ), true, 31);
+            series.appendData(new DataPoint(4, e), true, 31);
 
 
         }
@@ -90,35 +91,7 @@ public class GraphActivitynew extends AppCompatActivity {
 
         graph.addSeries(series);
 
-
-        series.setValueDependentColor(new ValueDependentColor<DataPoint>() {
-            @Override
-            public int get(DataPoint data) {
-                return Color.rgb((int) data.getX()*255/4, (int) Math.abs(data.getY()*255/6), 100);
-            }
-        });
-
-
-        series.setDrawValuesOnTop(true);
-        series.setValuesOnTopColor(Color.RED);
-
-
-
     }
-
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-    }
-
 }
 
 

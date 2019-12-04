@@ -33,20 +33,12 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"></activity>
-        <activity
-            android:name=".CounterActivity"
-            android:label="@string/title_activity_counter"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".GraphActivitynew" />
         <activity
             android:name=".Graph"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_graph"
             android:theme="@style/FullscreenTheme" />
-        <activity
-            android:name=".MapActivityreal"
-            android:label="@string/title_activity_map_activityreal"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

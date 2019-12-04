@@ -33,6 +33,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private String s;
     private LatLng position;
+    private final String API_KEY = "AIzaSyC1__M1ff-99MrCEfi0B0CB6PByZi3AJOg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

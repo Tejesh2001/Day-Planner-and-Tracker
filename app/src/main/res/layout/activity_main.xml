@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollview"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -36,7 +36,7 @@
         <TextView
             android:id="@+id/purpose"
             android:layout_width="match_parent"
-            android:layout_height="110dp"
+            android:layout_height="63dp"
             android:ems="10"
             android:inputType="textPersonName"
             android:text="What is the purpose of your visit? "
@@ -71,6 +71,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Academics" />
+
+        <com.jjoe64.graphview.GraphView
+            android:id="@+id/graphnew"
+            android:layout_width="match_parent"
+            android:layout_height="293dp" />
+
+
+
+
 
 
     </LinearLayout>
