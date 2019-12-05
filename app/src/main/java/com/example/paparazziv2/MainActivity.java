@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intentMap = new Intent(this, MapsActivity.class);
 
         enter.setOnClickListener(view -> {
-            intentMap.putExtra("Location", location.getText().toString());
+            intentMap.putExtra("LocationName", location.getText().toString());
             startActivity(intentMap);
         });
         init();

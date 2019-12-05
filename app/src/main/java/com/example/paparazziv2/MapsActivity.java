@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -30,20 +31,29 @@ import com.google.gson.JsonParser;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-
+    /** The map to be manipulated. */
     private GoogleMap mMap;
-    private String s;
+
+    /** The key used to make the google place search. */
+    private String searchKey;
     private LatLng position;
-    private final String API_KEY = "AIzaSyC1__M1ff-99MrCEfi0B0CB6PByZi3AJOg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        position = PlacesAPI.search(searchKey);
+        if (position == null) {
+            Toast.makeText(getApplicationContext(), "Search has failed",
+                    Toast.LENGTH_SHORT).show();
+            finish();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        }
     }
 
     MarkerOptions options;
@@ -62,68 +72,48 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         centerMap(mMap);
-        s = getIntent().getStringExtra("Location");
+        searchKey = getIntent().getStringExtra("LocationName");
 
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
 
+//        StringRequest stringRequest = new StringRequest(Request.Method.GET, "https://cs125-cloud.cs.illinois.edu/Fall2019-MP/presets/",
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        JsonParser ob = new JsonParser();
+//                        JsonElement element = ob.parse(response);
+//                        JsonObject jsonObject = element.getAsJsonObject();
+//
+//                        JsonArray presets = jsonObject.get("presets").getAsJsonArray();
+//                        JsonElement campus = presets.get(1);
+//                        JsonArray loc = campus.getAsJsonObject().get("targets").getAsJsonArray();
+//
+//                        for (JsonElement i : loc) {
+//
+//                            if (searchKey.equals(i.getAsJsonObject().get("note").getAsString())) {
+//                                System.out.println(searchKey + "     Location found");
+//                                position = new LatLng(i.getAsJsonObject().get("latitude").getAsDouble(),
+//                                        i.getAsJsonObject().get("longitude").getAsDouble());
+//                                options = new MarkerOptions().position(position);
+//                                mMap.addMarker(options);
+//
+//                                mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+//                            }
+//                        }
+//                    }
+//                }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//
+//            }
+//        });
+//        requestQueue.add(stringRequest);
 
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, "https://cs125-cloud.cs.illinois.edu/Fall2019-MP/presets/",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        JsonParser ob = new JsonParser();
-                        JsonElement element = ob.parse(response);
-                        JsonObject jsonObject = element.getAsJsonObject();
-
-
-
-                        JsonArray presets = jsonObject.get("presets").getAsJsonArray();
-                        JsonElement campus = presets.get(1);
-                        JsonArray loc = campus.getAsJsonObject().get("targets").getAsJsonArray();
-
-
-
-                        for (JsonElement i : loc) {
-
-                            if (s.equals(i.getAsJsonObject().get("note").getAsString())) {
-                                System.out.println(s + "     Location found");
-                                position = new LatLng(i.getAsJsonObject().get("latitude").getAsDouble(),
-                                        i.getAsJsonObject().get("longitude").getAsDouble());
-                                options = new MarkerOptions().position(position);
-                                mMap.addMarker(options);
-
-                                mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
-                            }
-
-
-                            }
-
-
-
-
-
-                        }
-
-
-
-
-
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-        requestQueue.add(stringRequest);
-
-
-
-
-
+        options = new MarkerOptions().position(position);
+        mMap.addMarker(options);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
     }
+
     private void centerMap(final GoogleMap map) {
         // Bounds of campustown and some surroundings
         final double swLatitude = 40.098331;
