@@ -6,7 +6,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+//import org.apache.http.HttpResponse;
+//import org.apache.http.client.HttpClient;
+//import org.apache.http.client.methods.HttpGet;
+//import org.apache.http.impl.client.DefaultHttpClient;
+//import org.apache.http.util.ByteArrayBuffer;
+//
+//import org.json.JSONObject;
+//import org.json.JSONException;
+//import org.json.JSONArray;
+
+//import java.io.BufferedInputStream;
 import java.io.IOException;
+//import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -100,13 +112,21 @@ public class PlacesAPI {
         JsonObject location;
         JsonObject searchResult = new JsonParser().parse(jsonResults.toString()).getAsJsonObject();
         try {
-            location = searchResult.get("candidates").getAsJsonArray().get(0).getAsJsonObject()
-                    .get("location").getAsJsonObject();
-            result = new LatLng(location.get("lat").getAsDouble(),
-                    location.get("lng").getAsDouble());
+            String status = searchResult.get("status").getAsString();
+            Log.i(LOG_TAG, "Status of the request result is " + status);
+            if (status.equals("OK")) {
+                location = searchResult.get("candidates").getAsJsonArray().get(0).getAsJsonObject()
+                        .get("location").getAsJsonObject();
+                result = new LatLng(location.get("lat").getAsDouble(),
+                        location.get("lng").getAsDouble());
+            } else {
+                String errorMessage = searchResult.get("error_message").getAsString();
+                Log.e(LOG_TAG, "Search has failed. Cause of failure: " + errorMessage);
+                return null;
+            }
         } catch (NullPointerException e) {
             Log.e(LOG_TAG, "Error processing API response", e);
-            return result;
+            return null;
         }
 
         return result;

@@ -6,10 +6,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.os.AsyncTask;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.BarGraphSeries;
@@ -51,13 +55,33 @@ public class MainActivity extends AppCompatActivity {
         Intent intentMap = new Intent(this, MapsActivity.class);
 
         enter.setOnClickListener(view -> {
-            intentMap.putExtra("LocationName", location.getText().toString());
-            startActivity(intentMap);
+            String enteredText = location.getText().toString();
+            if (!enteredText.isEmpty()) {
+                final LatLng[] DIRTY = new LatLng[1];
+                Thread thread = new Thread(() -> DIRTY[0] = PlacesAPI.search(enteredText));
+                thread.start();
+                try {
+                    thread.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                LatLng position = DIRTY[0];
+                if (position == null) {
+                    Toast.makeText(getApplicationContext(), "Search failed.", Toast.LENGTH_SHORT);
+                } else {
+                    double resultLat = position.latitude;
+                    double resultLng = position.longitude;
+                    intentMap.putExtra("lat", resultLat);
+                    intentMap.putExtra("lng", resultLng);
+                    startActivity(intentMap);
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "Please enter something!!",
+                        Toast.LENGTH_SHORT).show();
+            }
         });
+
         init();
-
-
-
     }
 
     private void init(){
@@ -68,20 +92,14 @@ public class MainActivity extends AppCompatActivity {
             a++;
             xy.add(new values(1, a));
             init();
-
-
             // startActivity(intent);
-
         });
         eat = findViewById(R.id.eat);
         eat.setOnClickListener(v -> {
             b++;
             xy.add(new values(2, b));
-
             init();
             // series.appendData(new DataPoint(1, b), true, 31);
-
-
             //startActivity(intent);
 
         });
@@ -90,46 +108,29 @@ public class MainActivity extends AppCompatActivity {
         festival.setOnClickListener(v -> {
             c++;
             xy.add(new values(3, c));
-
-
             init();
             // series.appendData(new DataPoint(2, c), true, 31);
-
             //startActivity(intent);
-
         });
 
         social = findViewById(R.id.socializing);
 
         social.setOnClickListener(v -> {
-
             d++;
             xy.add(new values(4, d));
-
-
             //series.appendData(new DataPoint(3, d), true, 31);
-
             init();
             //startActivity(intent);
-
         });
         acad = findViewById(R.id.Academics);
         acad.setOnClickListener(v -> {
-
             e++;
-
             xy.add(new values(5, e));
             init();
-
-
-
             //  series.appendData(new DataPoint(4, e), true, 31);
-
-
             //startActivity(intent);
-
-
         });
+
         if (xy == null) {
             return;
         }
@@ -146,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
         series.setColor(Color.BLUE);
         series.setSize(20f);
         GraphView graphView = findViewById(R.id.graphnew);
-
 
         //set Scrollable and Scaleable
         graphView.getViewport().setScalable(true);
@@ -169,18 +169,7 @@ public class MainActivity extends AppCompatActivity {
         //BarGraphSeries ob = g.fromJson(s, BarGraphSeries.class);
 
         //graphView.addSeries(ob);
-
-
-
-
-
-
-
-
     }
-
-
-
 
     private ArrayList<values> sort(ArrayList<values> array) {
 
@@ -227,6 +216,8 @@ public class MainActivity extends AppCompatActivity {
         }
         return array;
     }
+
+
 }
 
 
