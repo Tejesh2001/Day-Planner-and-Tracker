@@ -1,5 +1,6 @@
 package com.example.paparazziv2;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -10,6 +11,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.gson.Gson;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.BarGraphSeries;
@@ -18,9 +26,10 @@ import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-//1. Save state of activities after ending them. Bar graphs not forming.
+//1.
 //2. Add polylines ( I know how to do just need to save the states
 //3. After a day passes the lines get drawn automatically. So after each day the lines drawn are shown.
 
@@ -34,26 +43,50 @@ public class MainActivity extends AppCompatActivity {
     private PointsGraphSeries series;
 
     private int a, b, c, d, e;
+    private PlacesClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         PointsGraphSeries series = new PointsGraphSeries<>();
 
+        Intent intentMap = new Intent(this, MapsActivity.class);
+
         setContentView(R.layout.activity_main);
+        String key = "AIzaSyC1__M1ff-99MrCEfi0B0CB6PByZi3AJOg";
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), key);
+        }
+        client = Places.createClient(this);
+        final AutocompleteSupportFragment autocompleteSupportFragment =
+                (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME));
+        autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                LatLng location = place.getLatLng();
+                double lat = location.latitude;
+                double longit = location.longitude;
+                intentMap.putExtra("latitude", lat);
+                intentMap.putExtra("longitude", longit);
+                startActivity(intentMap);
+            }
+
+            @Override
+            public void onError(@NonNull Status status) {
+                Log.e("Error in status", " Error in getting status");
+
+            }
+        });
+
+
 
         categories = new ArrayList<>();
         xy = new ArrayList<>();
 
-        Button enter = findViewById(R.id.enter);
-        location = findViewById(R.id.location);
         club = findViewById(R.id.Clubbing);
-        Intent intentMap = new Intent(this, MapsActivity.class);
 
-        enter.setOnClickListener(view -> {
-            intentMap.putExtra("LocationName", location.getText().toString());
-            startActivity(intentMap);
-        });
+
         init();
 
 
@@ -68,9 +101,6 @@ public class MainActivity extends AppCompatActivity {
             a++;
             xy.add(new values(1, a));
             init();
-
-
-            // startActivity(intent);
 
         });
         eat = findViewById(R.id.eat);
@@ -102,12 +132,9 @@ public class MainActivity extends AppCompatActivity {
         social = findViewById(R.id.socializing);
 
         social.setOnClickListener(v -> {
-
             d++;
             xy.add(new values(4, d));
 
-
-            //series.appendData(new DataPoint(3, d), true, 31);
 
             init();
             //startActivity(intent);
@@ -117,16 +144,8 @@ public class MainActivity extends AppCompatActivity {
         acad.setOnClickListener(v -> {
 
             e++;
-
             xy.add(new values(5, e));
             init();
-
-
-
-            //  series.appendData(new DataPoint(4, e), true, 31);
-
-
-            //startActivity(intent);
 
 
         });
@@ -143,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
         }
         //set some properties
         series.setShape(PointsGraphSeries.Shape.RECTANGLE);
-        series.setColor(Color.BLUE);
         series.setSize(20f);
         GraphView graphView = findViewById(R.id.graphnew);
 
@@ -156,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
 
         //set manual x bounds
         graphView.getViewport().setYAxisBoundsManual(true);
-        graphView.getViewport().setMaxY(150);
+        graphView.getViewport().setMaxY(50);
         graphView.getViewport().setMinY(0);
 
         //set manual y bounds
