@@ -14,7 +14,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.view.ContextThemeWrapper;
-import android.view.View;
+// import android.view.View;
 
 import androidx.core.content.ContextCompat;
 
@@ -27,55 +27,37 @@ import androidx.core.content.ContextCompat;
 public class GpsLocationTracker extends Service implements LocationListener
 {
 
-    /**
-     * context of calling class
-     */
+    /** context of calling class */
     private Context mContext;
 
-    /**
-     * flag for gps status
-     */
+    /** flag for gps status */
     private boolean isGpsEnabled = false;
 
-    /**
-     * flag for network status
-     */
+    /** flag for network status */
     private boolean isNetworkEnabled = false;
 
-    /**
-     * flag for gps
-     */
+    /** flag for gps */
     private boolean canGetLocation = false;
 
-    /**
-     * location
-     */
+    /** location */
     private Location mLocation;
 
-    /**
-     * latitude
-     */
+    /** latitude */
     private double mLatitude;
 
-    /**
-     * longitude
-     */
+    /** longitude */
     private double mLongitude;
 
-    /**
-     * min distance change to get location update
-     */
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATE = 10;
+    /** min distance change to get location update */
+    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATE = 5;
 
     /**
      * min time for location update
      * 60000 = 1min
      */
-    private static final long MIN_TIME_FOR_UPDATE = 60000;
+    private static final long MIN_TIME_FOR_UPDATE = 10000;
 
-    /**
-     * location manager
-     */
+    /** location manager */
     private LocationManager mLocationManager;
 
 
@@ -83,7 +65,6 @@ public class GpsLocationTracker extends Service implements LocationListener
      * @param mContext constructor of the class
      */
     public GpsLocationTracker(Context mContext) {
-
         this.mContext = mContext;
         getLocation();
     }
@@ -93,84 +74,64 @@ public class GpsLocationTracker extends Service implements LocationListener
      * @return location
      */
     public Location getLocation() {
-
         try {
-
             mLocationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
-
             /*getting status of the gps*/
             isGpsEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
             /*getting status of network provider*/
             isNetworkEnabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
             if (!isGpsEnabled && !isNetworkEnabled) {
-
                 /*no location provider enabled*/
             } else {
-
                 this.canGetLocation = true;
-
                 /*getting location from network provider*/
-                if (isNetworkEnabled && ContextCompat.checkSelfPermission(getApplicationContext(),
-                        Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED) {
-
-                    mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                if (isNetworkEnabled && checkLocationPermission()) {
+                        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                             MIN_TIME_FOR_UPDATE, MIN_DISTANCE_CHANGE_FOR_UPDATE, this);
-
                     if (mLocationManager != null) {
-
                         mLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
                         if (mLocation != null) {
-
                             mLatitude = mLocation.getLatitude();
-
                             mLongitude = mLocation.getLongitude();
                         }
                     }
                     /*if gps is enabled then get location using gps*/
                     if (isGpsEnabled) {
-
                         if (mLocation == null) {
-
                             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_FOR_UPDATE, MIN_DISTANCE_CHANGE_FOR_UPDATE, this);
-
                             if (mLocationManager != null) {
-
                                 mLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
                                 if (mLocation != null) {
-
                                     mLatitude = mLocation.getLatitude();
-
                                     mLongitude = mLocation.getLongitude();
                                 }
-
                             }
                         }
-
                     }
                 }
             }
-
         } catch (Exception e) {
-
             e.printStackTrace();
         }
-
         return mLocation;
+    }
+
+    /**
+     * A private helper method to check
+     * @return
+     */
+    private boolean checkLocationPermission() {
+        String permission = "android.permission.ACCESS_FINE_LOCATION";
+        int res = this.checkCallingOrSelfPermission(permission);
+        return (res == PackageManager.PERMISSION_GRANTED);
     }
 
     /**
      * call this function to stop using gps in your application
      */
     public void stopUsingGps() {
-
         if (mLocationManager != null) {
-
             mLocationManager.removeUpdates(GpsLocationTracker.this);
-
         }
     }
 
@@ -180,9 +141,7 @@ public class GpsLocationTracker extends Service implements LocationListener
      *         function to get latitude
      */
     public double getLatitude() {
-
         if (mLocation != null) {
-
             mLatitude = mLocation.getLatitude();
         }
         return mLatitude;
@@ -193,13 +152,9 @@ public class GpsLocationTracker extends Service implements LocationListener
      *         function to get longitude
      */
     public double getLongitude() {
-
         if (mLocation != null) {
-
             mLongitude = mLocation.getLongitude();
-
         }
-
         return mLongitude;
     }
 
@@ -207,7 +162,6 @@ public class GpsLocationTracker extends Service implements LocationListener
      * @return to check gps or wifi is enabled or not
      */
     public boolean canGetLocation() {
-
         return this.canGetLocation;
     }
 
@@ -216,15 +170,10 @@ public class GpsLocationTracker extends Service implements LocationListener
      * settings to enable gps
      */
     public void showSettingsAlert() {
-
         AlertDialog.Builder mAlertDialog = new AlertDialog.Builder(new ContextThemeWrapper(mContext, R.style.AppTheme));
-
         mAlertDialog.setTitle("Gps Disabled");
-
         mAlertDialog.setMessage("gps is not enabled . do you want to enable ?");
-
-        mAlertDialog.setPositiveButton("settings", new View.OnClickListener() {
-
+        mAlertDialog.setPositiveButton("settings", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 // TODO Auto-generated method stub
                 Intent mIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
