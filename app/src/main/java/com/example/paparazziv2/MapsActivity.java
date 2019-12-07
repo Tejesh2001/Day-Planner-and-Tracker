@@ -35,35 +35,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /** The map to be manipulated. */
     private GoogleMap mMap;
 
-    /** The key used to make the google place search. */
-    private String searchKey;
-
-    /** The position of the search result as a LatLng object. */
     private LatLng position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
-        Intent intent = getIntent();
-        // Default to Siebel.
-        // This default shouldn't occur.
-        position = new LatLng(intent.getDoubleExtra("lat", 40.113863),
-                intent.getDoubleExtra("lng", -88.225046));
-
-        // Android requires network activities to not run on the
-        // main thread.
-//        if (position == null) {
-//            Toast.makeText(getApplicationContext(), "Search has failed",
-//                    Toast.LENGTH_SHORT).show();
-//            finish();
-//        }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-    }
+        }
+
 
     MarkerOptions options;
     /**
@@ -81,6 +64,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         centerMap(mMap);
+
+        Intent intent = getIntent();
+        double lat = intent.getDoubleExtra("latitude", 0.0);
+        double longit = intent.getDoubleExtra("longitude", 0.0);
+        position = new LatLng(lat, longit);
+
 
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
 
@@ -117,20 +106,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        });
 //        requestQueue.add(stringRequest);
 
-//        if (position == null) {
-//            Toast.makeText(getApplicationContext(), "Search has failed",
-//                    Toast.LENGTH_SHORT).show();
-//            finish();
-//        }
         options = new MarkerOptions().position(position);
         mMap.addMarker(options);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
     }
 
-    /**
-     * To be changed to center around the user's current location.
-     * @param map
-     */
     private void centerMap(final GoogleMap map) {
         // Bounds of campustown and some surroundings
         final double swLatitude = 40.098331;

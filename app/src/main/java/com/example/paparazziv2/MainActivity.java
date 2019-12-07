@@ -1,20 +1,27 @@
 package com.example.paparazziv2;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.os.AsyncTask;
 
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.gson.Gson;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.BarGraphSeries;
@@ -23,66 +30,78 @@ import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-//1. Save state of activities after ending them. Bar graphs not forming.
+//1.
 //2. Add polylines ( I know how to do just need to save the states
 //3. After a day passes the lines get drawn automatically. So after each day the lines drawn are shown.
 
 public class MainActivity extends AppCompatActivity {
-    private EditText location;
+    // private EditText location;
     private Button club, eat, festival, social, acad;
     private List<String> categories;
-    private List<Integer> clubdate, eatdate, socialdate, acaddate, festivaldate;
+    // private List<Integer> clubdate, eatdate, socialdate, acaddate, festivaldate;
 
     private ArrayList<values> xy;
     private PointsGraphSeries series;
 
     private int a, b, c, d, e;
+    private PlacesClient client;
+
+    private final int PERMISSION_FINE_LOCATION_ACCESS = 1;
+    private Button markCurrentLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         PointsGraphSeries series = new PointsGraphSeries<>();
 
+        Intent intentMap = new Intent(this, MapsActivity.class);
+
         setContentView(R.layout.activity_main);
+
+        markCurrentLocation = findViewById(R.id.markCurrent);
+        // Requesting location access
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+                // No explanation needed; request the permission
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.READ_CONTACTS},
+                        PERMISSION_FINE_LOCATION_ACCESS);
+        }
+
+        String key = "AIzaSyC1__M1ff-99MrCEfi0B0CB6PByZi3AJOg";
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), key);
+        }
+        client = Places.createClient(this);
+        final AutocompleteSupportFragment autocompleteSupportFragment =
+                (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME));
+        autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                LatLng location = place.getLatLng();
+                double lat = location.latitude;
+                double longit = location.longitude;
+                intentMap.putExtra("latitude", lat);
+                intentMap.putExtra("longitude", longit);
+                startActivity(intentMap);
+            }
+
+            @Override
+            public void onError(@NonNull Status status) {
+                Log.e("Error in status", " Error in getting status");
+
+            }
+        });
 
         categories = new ArrayList<>();
         xy = new ArrayList<>();
 
-        Button enter = findViewById(R.id.enter);
-        location = findViewById(R.id.location);
         club = findViewById(R.id.Clubbing);
-        Intent intentMap = new Intent(this, MapsActivity.class);
-
-        enter.setOnClickListener(view -> {
-            String enteredText = location.getText().toString();
-            if (!enteredText.isEmpty()) {
-                final LatLng[] DIRTY = new LatLng[1];
-                Thread thread = new Thread(() -> DIRTY[0] = PlacesAPI.search(enteredText));
-                thread.start();
-                try {
-                    thread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                LatLng position = DIRTY[0];
-                if (position == null) {
-                    Toast.makeText(getApplicationContext(), "Search failed.", Toast.LENGTH_SHORT);
-                } else {
-                    double resultLat = position.latitude;
-                    double resultLng = position.longitude;
-                    intentMap.putExtra("lat", resultLat);
-                    intentMap.putExtra("lng", resultLng);
-                    startActivity(intentMap);
-                }
-            } else {
-                Toast.makeText(getApplicationContext(), "Please enter something!!",
-                        Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
 
         init();
     }
@@ -95,16 +114,16 @@ public class MainActivity extends AppCompatActivity {
             a++;
             xy.add(new values(1, a));
             init();
-            // startActivity(intent);
+
         });
         eat = findViewById(R.id.eat);
         eat.setOnClickListener(v -> {
             b++;
             xy.add(new values(2, b));
+
             init();
             // series.appendData(new DataPoint(1, b), true, 31);
             //startActivity(intent);
-
         });
 
         festival = findViewById(R.id.festival);
@@ -121,19 +140,21 @@ public class MainActivity extends AppCompatActivity {
         social.setOnClickListener(v -> {
             d++;
             xy.add(new values(4, d));
-            //series.appendData(new DataPoint(3, d), true, 31);
+
+
             init();
             //startActivity(intent);
+
         });
         acad = findViewById(R.id.Academics);
         acad.setOnClickListener(v -> {
+
             e++;
             xy.add(new values(5, e));
             init();
-            //  series.appendData(new DataPoint(4, e), true, 31);
-            //startActivity(intent);
-        });
 
+
+        });
         if (xy == null) {
             return;
         }
@@ -147,9 +168,9 @@ public class MainActivity extends AppCompatActivity {
         }
         //set some properties
         series.setShape(PointsGraphSeries.Shape.RECTANGLE);
-        series.setColor(Color.BLUE);
         series.setSize(20f);
         GraphView graphView = findViewById(R.id.graphnew);
+
 
         //set Scrollable and Scaleable
         graphView.getViewport().setScalable(true);
@@ -159,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
 
         //set manual x bounds
         graphView.getViewport().setYAxisBoundsManual(true);
-        graphView.getViewport().setMaxY(150);
+        graphView.getViewport().setMaxY(50);
         graphView.getViewport().setMinY(0);
 
         //set manual y bounds
@@ -175,13 +196,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ArrayList<values> sort(ArrayList<values> array) {
-
-
         int factor = Integer.parseInt(String.valueOf(Math.round(Math.pow(array.size(), 2))));
         int m = array.size() - 1;
         int count = 0;
-
-
         while (true) {
             m--;
             if (m <= 0) {
@@ -220,10 +237,29 @@ public class MainActivity extends AppCompatActivity {
         return array;
     }
 
-    public boolean checkLocationPermission() {
-        String permission = "android.permission.ACCESS_FINE_LOCATION";
-        int res = this.checkCallingOrSelfPermission(permission);
-        return (res == PackageManager.PERMISSION_GRANTED);
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_FINE_LOCATION_ACCESS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    // make a toast mesasge
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    // Hide the mark current button.
+                    // Make a toast message.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
     }
 }
 
