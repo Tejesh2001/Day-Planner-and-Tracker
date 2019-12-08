@@ -24,6 +24,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -81,6 +83,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (LatLng i : locatorslist) {
             MarkerOptions options = new MarkerOptions().position(i);
             mMap.addMarker(options);
+
+
+        }
+        for (int i = 0; i < locatorslist.size() - 1; i++) {
+
+            Polyline line = mMap.addPolyline(new PolylineOptions().add(locatorslist.get(i),
+                    locatorslist.get(i + 1)));
 
         }
 
