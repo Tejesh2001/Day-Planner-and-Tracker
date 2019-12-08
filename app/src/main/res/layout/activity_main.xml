@@ -18,6 +18,14 @@
             android:layout_width="match_parent"
             android:layout_height="59dp" />
 
+
+        <Button
+            android:id="@+id/markCurrent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mark Current Location" />
+        android:text="Mark Your Current Location" />
+
         <TextView
             android:id="@+id/purpose"
             android:layout_width="match_parent"
