@@ -8,12 +8,10 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
@@ -24,11 +22,9 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.gson.Gson;
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private List<LatLng> locations = new ArrayList<>();
 
     private final int PERMISSION_FINE_LOCATION_ACCESS = 1;
-    private Button markCurrentLocation;
+    private boolean hasLocationAccess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,16 +57,16 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        markCurrentLocation = findViewById(R.id.markCurrent);
+        hasLocationAccess = (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED);
 
         // Requesting location access
-        if (ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED) {
-                // No explanation needed; request the permission
-                ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.READ_CONTACTS},
-                        PERMISSION_FINE_LOCATION_ACCESS);
+        if (!hasLocationAccess) {
+            // No explanation needed; request the permission
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.READ_CONTACTS},
+                    PERMISSION_FINE_LOCATION_ACCESS);
         }
 
         String key = "AIzaSyC1__M1ff-99MrCEfi0B0CB6PByZi3AJOg";
@@ -116,13 +112,13 @@ public class MainActivity extends AppCompatActivity {
     private void init(){
         //declare the xySeries Object
         series = new PointsGraphSeries<>();
-
         club.setOnClickListener(v -> {
             a++;
             xy.add(new values(1, a));
             init();
 
         });
+
         eat = findViewById(R.id.eat);
         eat.setOnClickListener(v -> {
             b++;
@@ -143,30 +139,25 @@ public class MainActivity extends AppCompatActivity {
         });
 
         social = findViewById(R.id.socializing);
-
         social.setOnClickListener(v -> {
             d++;
             xy.add(new values(4, d));
-
-
             init();
             //startActivity(intent);
 
         });
+
         acad = findViewById(R.id.Academics);
         acad.setOnClickListener(v -> {
-
             e++;
             xy.add(new values(5, e));
             init();
-
-
         });
+
         if (xy == null) {
             return;
         }
         xy = sort(xy);
-
         for (int i = 0; i < xy.size(); i++) {
 
             double x = xy.get(i).getX();
@@ -252,36 +243,15 @@ public class MainActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    // make a toast mesasge
+                    Toast.makeText(getApplicationContext(), "Permission granted!",
+                            Toast.LENGTH_SHORT).show();
                 } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    // Hide the mark current button.
-                    // Make a toast message.
+                    Toast.makeText(getApplicationContext(), "Mark current location function has been disabled",
+                            Toast.LENGTH_SHORT).show();
                 }
-                return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request.
         }
     }
+
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

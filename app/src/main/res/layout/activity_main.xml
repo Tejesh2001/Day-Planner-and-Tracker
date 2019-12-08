@@ -15,15 +15,12 @@
             android:id="@+id/autocomplete_fragment"
             android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
             android:layout_width="match_parent"
-            android:layout_height="59dp" />
+            android:layout_height="59dp" /><![CDATA[
 
 
-        <Button
-            android:id="@+id/markCurrent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Mark Current Location" />
         android:text="Mark Your Current Location" />
+
+        ]]>
 
         <TextView
             android:id="@+id/purpose"
