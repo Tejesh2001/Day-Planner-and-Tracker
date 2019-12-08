@@ -8,12 +8,14 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
+// import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+// import android.widget.EditText;
+// import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
@@ -22,15 +24,16 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.google.gson.Gson;
+// import com.google.gson.Gson;
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.BarGraphSeries;
+// import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.PointsGraphSeries;
 
-import java.io.Serializable;
+// import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 //1.
@@ -38,7 +41,7 @@ import java.util.List;
 //3. After a day passes the lines get drawn automatically. So after each day the lines drawn are shown.
 
 public class MainActivity extends AppCompatActivity {
-    // private EditText location;
+    /** Some buttons used in this activity. */
     private Button club, eat, festival, social, acad;
     private List<String> categories;
     // private List<Integer> clubdate, eatdate, socialdate, acaddate, festivaldate;
@@ -50,7 +53,12 @@ public class MainActivity extends AppCompatActivity {
     private PlacesClient client;
 
     private final int PERMISSION_FINE_LOCATION_ACCESS = 1;
-    private Button markCurrentLocation;
+
+    /** The list storing all the past positions. */
+    private List<Position> positions = new LinkedList<>();
+
+    /** Whether the user has granted this app location access. */
+    private boolean hasLocationAccess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,16 +69,18 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        markCurrentLocation = findViewById(R.id.markCurrent);
+        hasLocationAccess = ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED;
+
         // Requesting location access
-        if (ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (hasLocationAccess) {
                 // No explanation needed; request the permission
                 ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.READ_CONTACTS},
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         PERMISSION_FINE_LOCATION_ACCESS);
         }
+
+        GpsLocationTracker tracker = new GpsLocationTracker(getApplicationContext());
 
         String key = "AIzaSyC1__M1ff-99MrCEfi0B0CB6PByZi3AJOg";
         if (!Places.isInitialized()) {
@@ -85,9 +95,15 @@ public class MainActivity extends AppCompatActivity {
             public void onPlaceSelected(@NonNull Place place) {
                 LatLng location = place.getLatLng();
                 double lat = location.latitude;
-                double longit = location.longitude;
-                intentMap.putExtra("latitude", lat);
-                intentMap.putExtra("longitude", longit);
+                double lng = location.longitude;
+                positions.add(new Position(lat, lng));
+                if (hasLocationAccess) {
+                    double currentLat = tracker.getLatitude();
+                    double currentLng = tracker.getLongitude();
+                    Position currentPos = new Position(currentLat, currentLng);
+                    intentMap.putExtra("currentPos", currentPos);
+                }
+                intentMap.putExtra("searchPos", positions.toArray());
                 startActivity(intentMap);
             }
 
@@ -245,36 +261,16 @@ public class MainActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    // make a toast mesasge
+                    Toast.makeText(getApplicationContext(), "Permission granted!",
+                            Toast.LENGTH_SHORT).show();
                 } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                    // Hide the mark current button.
-                    // Make a toast message.
+                    Toast.makeText(getApplicationContext(), "Mark current location function has been disabled",
+                            Toast.LENGTH_SHORT).show();
+
                 }
                 return;
             }
 
-            // other 'case' lines to check for other
-            // permissions this app might request.
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

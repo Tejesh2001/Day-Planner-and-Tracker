@@ -24,31 +24,41 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     /** The map to be manipulated. */
     private GoogleMap mMap;
-
-    private LatLng position;
+    /** The position result of the search */
+    private Position[] searchPosition;
+    /** The user's current location. */
+    private Position currentPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        Intent intent = getIntent();
+        searchPosition = (Position[]) intent.getParcelableArrayExtra("searchPos");
+        currentPosition = intent.getParcelableExtra("currentPos");
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         }
 
-
-    MarkerOptions options;
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -64,12 +74,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         centerMap(mMap);
-
-        Intent intent = getIntent();
-        double lat = intent.getDoubleExtra("latitude", 0.0);
-        double longit = intent.getDoubleExtra("longitude", 0.0);
-        position = new LatLng(lat, longit);
-
 
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
 
@@ -106,9 +110,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        });
 //        requestQueue.add(stringRequest);
 
-        options = new MarkerOptions().position(position);
-        mMap.addMarker(options);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+        int size = searchPosition.length;
+        for (int i = 0; i < size; i++) {
+            MarkerOptions searchResultOption = new MarkerOptions().
+                    position(searchPosition[i].getPosition());
+            mMap.addMarker(searchResultOption);
+            if (i == size - 1) {
+                mMap.moveCamera(CameraUpdateFactory.
+                        newLatLng(searchPosition[i].getPosition()));
+            }
+        }
+        if (currentPosition != null) {
+            MarkerOptions currentPosOption = new MarkerOptions().
+                    position(currentPosition.getPosition());
+            mMap.addMarker(currentPosOption);
+            PolylineOptions currentToSearch = new PolylineOptions();
+            currentToSearch.add(currentPosition.getPosition(),
+                    searchPosition[size - 1].getPosition());
+            mMap.addPolyline(currentToSearch);
+        }
     }
 
     private void centerMap(final GoogleMap map) {
@@ -139,10 +159,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putDouble("latitude", position.latitude  );
-        outState.putDouble("longitude", position.longitude);
-
-
+        outState.putParcelableArray("searchPosition", searchPosition);
+        outState.putParcelable("currentPosition", currentPosition);
     }
 
     @Override
