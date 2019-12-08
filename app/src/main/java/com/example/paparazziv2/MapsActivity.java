@@ -25,10 +25,15 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -68,7 +73,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Intent intent = getIntent();
         double lat = intent.getDoubleExtra("latitude", 0.0);
         double longit = intent.getDoubleExtra("longitude", 0.0);
+        String locaters = intent.getStringExtra("locations");
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<LatLng>>(){}.getType();
+        List<LatLng> locatorslist = gson.fromJson(locaters, type);
         position = new LatLng(lat, longit);
+        for (LatLng i : locatorslist) {
+            MarkerOptions options = new MarkerOptions().position(i);
+            mMap.addMarker(options);
+
+        }
 
 
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);

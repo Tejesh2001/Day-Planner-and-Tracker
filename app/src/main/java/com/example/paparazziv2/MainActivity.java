@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int a, b, c, d, e;
     private PlacesClient client;
+    private List<LatLng> locations = new ArrayList<>();
 
     private final int PERMISSION_FINE_LOCATION_ACCESS = 1;
     private Button markCurrentLocation;
@@ -88,6 +89,12 @@ public class MainActivity extends AppCompatActivity {
                 double longit = location.longitude;
                 intentMap.putExtra("latitude", lat);
                 intentMap.putExtra("longitude", longit);
+                locations.add(location);
+                Gson gson = new Gson();
+                String locater = gson.toJson(locations);
+                intentMap.putExtra("locations", locater);
+
+
                 startActivity(intentMap);
             }
 
