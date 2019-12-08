@@ -73,7 +73,7 @@ public class GpsLocationTracker extends Service implements LocationListener
     /**
      * @return location
      */
-    public Location getLocation() {
+    private Location getLocation() {
         try {
             mLocationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
             /*getting status of the gps*/
@@ -82,6 +82,7 @@ public class GpsLocationTracker extends Service implements LocationListener
             isNetworkEnabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
             if (!isGpsEnabled && !isNetworkEnabled) {
                 /*no location provider enabled*/
+                showSettingsAlert();
             } else {
                 this.canGetLocation = true;
                 /*getting location from network provider*/
