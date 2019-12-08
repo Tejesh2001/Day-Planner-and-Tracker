@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     // private EditText location;
     private Button club, eat, festival, social, acad;
     private List<String> categories;
-    // private List<Integer> clubdate, eatdate, socialdate, acaddate, festivaldate;
 
     private ArrayList<values> xy;
     private PointsGraphSeries series;
