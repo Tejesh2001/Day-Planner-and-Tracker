@@ -88,7 +88,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         for (int i = 0; i < locatorslist.size() - 1; i++) {
 
-            Polyline line = mMap.addPolyline(new PolylineOptions().add(locatorslist.get(i),
+             mMap.addPolyline(new PolylineOptions().add(locatorslist.get(i),
                     locatorslist.get(i + 1)));
 
         }
