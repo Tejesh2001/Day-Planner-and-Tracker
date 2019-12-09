@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.AudioTrack;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -44,9 +45,12 @@ public class MainActivity extends AppCompatActivity {
     private int a, b, c, d, e;
     private PlacesClient client;
     private List<LatLng> locations = new ArrayList<>();
+    private List<Position> positions = new ArrayList<>();
 
     private final int PERMISSION_FINE_LOCATION_ACCESS = 1;
     private boolean hasLocationAccess;
+    private int markerSelection = -1;
+    private final int MARKER_SELECTION_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +62,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         hasLocationAccess = (ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED);
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED);
 
         // Requesting location access
         if (!hasLocationAccess) {
             // No explanation needed; request the permission
             ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.READ_CONTACTS},
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSION_FINE_LOCATION_ACCESS);
         }
 
@@ -81,17 +85,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPlaceSelected(@NonNull Place place) {
                 LatLng location = place.getLatLng();
-                double lat = location.latitude;
-                double longit = location.longitude;
-                intentMap.putExtra("latitude", lat);
-                intentMap.putExtra("longitude", longit);
                 locations.add(location);
+                positions.add(new Position(location));
                 Gson gson = new Gson();
                 String locater = gson.toJson(locations);
                 intentMap.putExtra("locations", locater);
-
-
-                startActivity(intentMap);
+                if (hasLocationAccess) {
+                    GpsLocationTracker tracker = new GpsLocationTracker(getApplicationContext());
+                    double currentLat = tracker.getLatitude();
+                    double currentLng = tracker.getLongitude();
+                    intentMap.putExtra("currentLat", currentLat);
+                    intentMap.putExtra("currentLng", currentLng);
+                }
+                startActivityForResult(intentMap, MARKER_SELECTION_REQUEST);
             }
 
             @Override
@@ -109,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         init();
     }
 
+    // gotta change this around so it accept an Position object input
     private void init(){
         //declare the xySeries Object
         series = new PointsGraphSeries<>();
@@ -249,6 +256,16 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Mark current location function has been disabled",
                             Toast.LENGTH_SHORT).show();
                 }
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == MARKER_SELECTION_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                markerSelection = data.getIntExtra("selection", -1);
             }
         }
     }

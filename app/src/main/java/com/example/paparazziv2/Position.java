@@ -20,6 +20,8 @@ public class Position implements Parcelable {
     private int socializeCount = 0;
     private int academicCount = 0;
 
+    public Position(LatLng newPos) { position = newPos; }
+
     public Position(double lat, double lng) {
         position = new LatLng(lat, lng);
     }
@@ -29,10 +31,15 @@ public class Position implements Parcelable {
     }
 
     public Position(Parcel source) {
-        String[] data = new String[2];
+        String[] data = new String[7];
 
         source.readStringArray(data);
         position = new LatLng(Double.parseDouble(data[0]), Double.parseDouble(data[1]));
+        clubCount = Integer.parseInt(data[2]);
+        eatCount = Integer.parseInt(data[3]);
+        festivalCount = Integer.parseInt(data[4]);
+        socializeCount = Integer.parseInt(data[5]);
+        academicCount = Integer.parseInt(data[6]);
     }
 
     @Override
@@ -43,7 +50,9 @@ public class Position implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeStringArray(new String[]{Double.toString(position.latitude),
-                Double.toString(position.longitude)});
+                Double.toString(position.longitude), Integer.toString(clubCount),
+                Integer.toString(eatCount), Integer.toString(festivalCount),
+                Integer.toString(socializeCount), Integer.toString(academicCount)});
     }
 
     public static final Parcelable.Creator<Position> CREATOR =

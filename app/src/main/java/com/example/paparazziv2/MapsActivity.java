@@ -42,20 +42,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /** The map to be manipulated. */
     private GoogleMap mMap;
 
-    private LatLng position;
+    private LatLng currentPosition = null;
+
+    List<LatLng> locatorsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        Intent intent = getIntent();
+        String locaters = intent.getStringExtra("locations");
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<LatLng>>(){}.getType();
+        locatorsList = gson.fromJson(locaters, type);
+        double currentLat = intent.getDoubleExtra("currentLat", -600);
+        double currentLng = intent.getDoubleExtra("currentLat", -600);
+        if (currentLat != -600 && currentLng != -600) {
+            currentPosition = new LatLng(currentLat, currentLng);
+        }
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         }
 
-
-    MarkerOptions options;
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -70,29 +82,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        mMap.setOnMarkerClickListener(marker -> {
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("selection", (Integer) marker.getTag());
+            setResult(RESULT_OK, resultIntent);
+            finish();
+            return true;
+        });
+
         centerMap(mMap);
 
-        Intent intent = getIntent();
-        double lat = intent.getDoubleExtra("latitude", 0.0);
-        double longit = intent.getDoubleExtra("longitude", 0.0);
-        String locaters = intent.getStringExtra("locations");
-        Gson gson = new Gson();
-        Type type = new TypeToken<List<LatLng>>(){}.getType();
-        List<LatLng> locatorslist = gson.fromJson(locaters, type);
-        position = new LatLng(lat, longit);
-        for (LatLng i : locatorslist) {
-            MarkerOptions options = new MarkerOptions().position(i);
-            mMap.addMarker(options);
-
-
-        }
-        for (int i = 0; i < locatorslist.size() - 1; i++) {
-
-             mMap.addPolyline(new PolylineOptions().add(locatorslist.get(i),
-                    locatorslist.get(i + 1)));
+        int size = locatorsList.size();
+        for (int i = 0; i < size; i++) {
+            MarkerOptions options = new MarkerOptions().position(locatorsList.get(i));
+            Marker marker = mMap.addMarker(options);
+            marker.setTag(i);
+            if (i < size - 1) {
+                mMap.addPolyline(new PolylineOptions().add(locatorsList.get(i),
+                        locatorsList.get(i + 1)));
+            }
+            if (i == size - 1) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(locatorsList.get(i)));
+            }
 
         }
-
 
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
 
@@ -129,9 +142,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        });
 //        requestQueue.add(stringRequest);
 
-        options = new MarkerOptions().position(position);
-        mMap.addMarker(options);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+        if (currentPosition != null) {
+            MarkerOptions currentOption = new MarkerOptions().position(currentPosition);
+            mMap.addMarker(currentOption);
+        }
     }
 
     private void centerMap(final GoogleMap map) {
@@ -162,8 +176,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putDouble("latitude", position.latitude  );
-        outState.putDouble("longitude", position.longitude);
+        // outState.putDouble("latitude", position.latitude);
+        // outState.putDouble("longitude", position.longitude);
 
 
     }
