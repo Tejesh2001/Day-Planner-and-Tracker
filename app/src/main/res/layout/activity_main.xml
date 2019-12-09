@@ -11,16 +11,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <fragment
-            android:id="@+id/autocomplete_fragment"
-            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-            android:layout_width="match_parent"
-            android:layout_height="59dp" /><![CDATA[
 
-
-        android:text="Mark Your Current Location" />
-
-        ]]>
 
         <TextView
             android:id="@+id/purpose"
@@ -36,40 +27,36 @@
             android:id="@+id/Clubbing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Clubbing/Bar hopping" />
+            android:text="Clubbing/Bar hopping - 1" />
 
         <Button
             android:id="@+id/eat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Eating out" />
+            android:text="Eating out - 2" />
 
         <Button
             android:id="@+id/festival"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Festival" />
+            android:text="Festival - 3" />
 
         <Button
             android:id="@+id/socializing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Socializing" />
+            android:text="Socializing - 4" />
 
         <Button
             android:id="@+id/Academics"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Academics" />
+            android:text="Academics - 5" />
 
         <com.jjoe64.graphview.GraphView
             android:id="@+id/graphnew"
             android:layout_width="match_parent"
-            android:layout_height="367dp" />
-
-
-
-
+            android:layout_height="431dp" />
 
 
     </LinearLayout>

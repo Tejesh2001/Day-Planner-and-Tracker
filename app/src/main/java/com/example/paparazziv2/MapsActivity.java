@@ -51,16 +51,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        Intent intent = getIntent();
-        String locaters = intent.getStringExtra("locations");
-        Gson gson = new Gson();
-        Type type = new TypeToken<List<LatLng>>(){}.getType();
-        locatorsList = gson.fromJson(locaters, type);
-        double currentLat = intent.getDoubleExtra("currentLat", -600);
-        double currentLng = intent.getDoubleExtra("currentLng", -600);
-        if (currentLat != -600 && currentLng != -600) {
-            currentPosition = new LatLng(currentLat, currentLng);
-        }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -81,71 +71,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        centerMap(mMap);
+        Intent intent = getIntent();
+        String locaters = intent.getStringExtra("locations");
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<LatLng>>(){}.getType();
+        locatorsList = gson.fromJson(locaters, type);
+        double currentLat = intent.getDoubleExtra("currentLat", 0.0);
+        double currentLng = intent.getDoubleExtra("currentLng", 0.0);
 
-        mMap.setOnMarkerClickListener(marker -> {
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("selection", (Integer) marker.getTag());
-            setResult(RESULT_OK, resultIntent);
-            finish();
-            return true;
-        });
+            currentPosition = new LatLng(currentLat, currentLng);
+            System.out.println(currentPosition.latitude + " CURRENNT POSSSSSS");
 
-        // centerMap(mMap);
-
-        int size = locatorsList.size();
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < locatorsList.size() - 1; i++) {
             MarkerOptions options = new MarkerOptions().position(locatorsList.get(i));
-            Marker marker = mMap.addMarker(options);
-            marker.setTag(i);
-            if (i < size - 1) {
-                mMap.addPolyline(new PolylineOptions().add(locatorsList.get(i),
-                        locatorsList.get(i + 1)));
-            }
-            if (i == size - 1) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(locatorsList.get(i)));
-            }
+            mMap.addMarker(options);
+            mMap.addPolyline(new PolylineOptions().add(locatorsList.get(i),
+                    locatorsList.get(i + 1)));
 
         }
 
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-//        StringRequest stringRequest = new StringRequest(Request.Method.GET, "https://cs125-cloud.cs.illinois.edu/Fall2019-MP/presets/",
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        JsonParser ob = new JsonParser();
-//                        JsonElement element = ob.parse(response);
-//                        JsonObject jsonObject = element.getAsJsonObject();
-//
-//                        JsonArray presets = jsonObject.get("presets").getAsJsonArray();
-//                        JsonElement campus = presets.get(1);
-//                        JsonArray loc = campus.getAsJsonObject().get("targets").getAsJsonArray();
-//
-//                        for (JsonElement i : loc) {
-//
-//                            if (searchKey.equals(i.getAsJsonObject().get("note").getAsString())) {
-//                                System.out.println(searchKey + "     Location found");
-//                                position = new LatLng(i.getAsJsonObject().get("latitude").getAsDouble(),
-//                                        i.getAsJsonObject().get("longitude").getAsDouble());
-//                                options = new MarkerOptions().position(position);
-//                                mMap.addMarker(options);
-//
-//                                mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
-//                            }
-//                        }
-//                    }
-//                }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        });
-//        requestQueue.add(stringRequest);
+
+
 
         if (currentPosition != null) {
             MarkerOptions currentOption = new MarkerOptions().position(currentPosition);
             mMap.addMarker(currentOption);
         }
+        LatLng position = new LatLng(intent.getDoubleExtra("Latitude", 0.0),
+                intent.getDoubleExtra("Longitude", 0.0));
+
+        MarkerOptions options = new MarkerOptions().position(position);
+        mMap.addMarker(options);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+
+
+
+
     }
 
     private void centerMap(final GoogleMap map) {

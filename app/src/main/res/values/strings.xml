@@ -7,4 +7,7 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_counter">CounterActivity</string>
     <string name="title_activity_maps">Map</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="title_activity_launch">Launch</string>
 </resources>

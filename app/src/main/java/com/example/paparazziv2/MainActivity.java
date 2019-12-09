@@ -61,51 +61,6 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        hasLocationAccess = (ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED);
-
-        // Requesting location access
-        if (!hasLocationAccess) {
-            // No explanation needed; request the permission
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSION_FINE_LOCATION_ACCESS);
-        }
-
-        String key = "AIzaSyC1__M1ff-99MrCEfi0B0CB6PByZi3AJOg";
-        if (!Places.isInitialized()) {
-            Places.initialize(getApplicationContext(), key);
-        }
-        client = Places.createClient(this);
-        final AutocompleteSupportFragment autocompleteSupportFragment =
-                (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-        autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME));
-        autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(@NonNull Place place) {
-                LatLng location = place.getLatLng();
-                locations.add(location);
-                positions.add(new Position(location));
-                Gson gson = new Gson();
-                String locater = gson.toJson(locations);
-                intentMap.putExtra("locations", locater);
-                if (hasLocationAccess) {
-                    GpsLocationTracker tracker = new GpsLocationTracker(getApplicationContext());
-                    double currentLat = tracker.getLatitude();
-                    double currentLng = tracker.getLongitude();
-                    intentMap.putExtra("currentLat", currentLat);
-                    intentMap.putExtra("currentLng", currentLng);
-                }
-                startActivityForResult(intentMap, MARKER_SELECTION_REQUEST);
-            }
-
-            @Override
-            public void onError(@NonNull Status status) {
-                Log.e("Error in status", " Error in getting status");
-
-            }
-        });
 
         Button club = findViewById(R.id.Clubbing);
         club.setOnClickListener(unused -> {
