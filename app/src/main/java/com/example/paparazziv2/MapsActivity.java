@@ -57,7 +57,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Type type = new TypeToken<List<LatLng>>(){}.getType();
         locatorsList = gson.fromJson(locaters, type);
         double currentLat = intent.getDoubleExtra("currentLat", -600);
-        double currentLng = intent.getDoubleExtra("currentLat", -600);
+        double currentLng = intent.getDoubleExtra("currentLng", -600);
         if (currentLat != -600 && currentLng != -600) {
             currentPosition = new LatLng(currentLat, currentLng);
         }
@@ -90,7 +90,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return true;
         });
 
-        centerMap(mMap);
+        // centerMap(mMap);
 
         int size = locatorsList.size();
         for (int i = 0; i < size; i++) {

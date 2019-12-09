@@ -30,6 +30,46 @@ public class Position implements Parcelable {
         return position;
     }
 
+    public int getClubCount() {
+        return clubCount;
+    }
+
+    public int getEatCount() {
+        return eatCount;
+    }
+
+    public int getFestivalCount() {
+        return festivalCount;
+    }
+
+    public int getSocializeCount() {
+        return socializeCount;
+    }
+
+    public int getAcademicCount() {
+        return academicCount;
+    }
+
+    public void incrementClub() {
+        clubCount++;
+    }
+
+    public void incrementEat() {
+        eatCount++;
+    }
+
+    public void incrementFestival() {
+        festivalCount++;
+    }
+
+    public void incrementSocial() {
+        socializeCount++;
+    }
+
+    public void incrementAcademic() {
+        academicCount++;
+    }
+
     public Position(Parcel source) {
         String[] data = new String[7];
 

@@ -6,12 +6,10 @@ public class values {
     private double y;
 
     public values(double x, double y) {
-
-    this.x = x;
-    this.y = y;
-
-
+        this.x = x;
+        this.y = y;
     }
+
     public double getX() {
         return x;
     }
@@ -24,7 +22,4 @@ public class values {
     public void setY(double y) {
         this.y = y;
     }
-
-
-
 }
