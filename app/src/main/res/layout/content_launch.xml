@@ -7,18 +7,25 @@
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".Launch"
-    tools:showIn="@layout/activity_launch">
+    tools:showIn="@layout/activity_launch"
+    android:background="@drawable/log">
 
     <Button
         android:id="@+id/Graph"
         android:layout_width="match_parent"
-        android:layout_height="308dp"
+        android:layout_height="111dp"
         android:text="Launch Activity Graph" />
 
     <Button
         android:id="@+id/mapbutton"
         android:layout_width="match_parent"
-        android:layout_height="370dp"
+        android:layout_height="143dp"
         android:text="Launch search for map" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="417dp"
+        app:srcCompat="@drawable/logo" />
 
 </LinearLayout>
