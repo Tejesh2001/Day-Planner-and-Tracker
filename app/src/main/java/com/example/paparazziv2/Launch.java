@@ -19,52 +19,16 @@ import android.widget.Toast;
 
 public class Launch extends AppCompatActivity {
 
-
-    private final int PERMISSION_FINE_LOCATION_ACCESS = 1;
-    private boolean hasLocationAccess;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
 
 
-        hasLocationAccess = (ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED);
-
-        // Requesting location access
-        if (!hasLocationAccess) {
-            // No explanation needed; request the permission
-            ActivityCompat.requestPermissions(Launch.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSION_FINE_LOCATION_ACCESS);
-        }
-
-
-
-        Button start = findViewById(R.id.startMain);
-        start.setOnClickListener(v -> {
+        Button startMain = findViewById(R.id.startMain);
+        startMain.setOnClickListener(unused -> {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         });
     }
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_FINE_LOCATION_ACCESS: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(), "Permission granted!",
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Mark current location function has been disabled",
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    }
-
-
 }
