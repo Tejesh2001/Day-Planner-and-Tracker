@@ -89,7 +89,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return false;
         });
 
-        // centerMap(mMap);
+        centerMap(mMap);
 
         int size = locatorsList.size();
         for (int i = 0; i < size; i++) {
@@ -142,33 +142,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        requestQueue.add(stringRequest);
 
         if (currentPosition != null) {
-            MarkerOptions currentOption = new MarkerOptions().position(currentPosition);
+            MarkerOptions currentOption = new MarkerOptions().position(currentPosition)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
             mMap.addMarker(currentOption);
         }
     }
 
-//    private void centerMap(final GoogleMap map) {
-//        // Bounds of campustown and some surroundings
-//        final double swLatitude = 40.098331;
-//        final double swLongitude = -88.246065;
-//        final double neLatitude = 40.116601;
-//        final double neLongitude = -88.213077;
-//
-//        // Get the window dimensions (for the width)
-//        Point windowSize = new Point();
-//        getWindowManager().getDefaultDisplay().getSize(windowSize);
-//
-//        // Convert 300dp (height of map control) to pixels
-//        final int mapHeightDp = 300;
-//        float heightPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, mapHeightDp,
-//                getResources().getDisplayMetrics());
-//
-//        // Submit the camera update
-//        final int paddingPx = 10;
-//        map.moveCamera(CameraUpdateFactory.newLatLngBounds(new LatLngBounds(
-//                new LatLng(swLatitude, swLongitude),
-//                new LatLng(neLatitude, neLongitude)), windowSize.x, (int) heightPx, paddingPx));
-//    }
+    private void centerMap(final GoogleMap map) {
+        // Bounds of campustown and some surroundings
+        final double swLatitude = 40.098331;
+        final double swLongitude = -88.246065;
+        final double neLatitude = 40.116601;
+        final double neLongitude = -88.213077;
+
+        // Get the window dimensions (for the width)
+        Point windowSize = new Point();
+        getWindowManager().getDefaultDisplay().getSize(windowSize);
+
+        // Convert 300dp (height of map control) to pixels
+        final int mapHeightDp = 300;
+        float heightPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, mapHeightDp,
+                getResources().getDisplayMetrics());
+
+        // Submit the camera update
+        final int paddingPx = 10;
+        map.moveCamera(CameraUpdateFactory.newLatLngBounds(new LatLngBounds(
+                new LatLng(swLatitude, swLongitude),
+                new LatLng(neLatitude, neLongitude)), windowSize.x, (int) heightPx, paddingPx));
+    }
 
 
 
