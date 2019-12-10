@@ -4,21 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center|center_horizontal"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".Launch"
     tools:showIn="@layout/activity_launch">
 
     <Button
-        android:id="@+id/Graph"
-        android:layout_width="match_parent"
-        android:layout_height="308dp"
-        android:text="Launch Activity Graph" />
-
-    <Button
-        android:id="@+id/mapbutton"
-        android:layout_width="match_parent"
-        android:layout_height="370dp"
-        android:text="Launch search for map" />
+        android:id="@+id/startMain"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="264dp"
+        android:layout_height="58dp"
+        android:background="#00FFFFFF"
+        android:text="Start Recording!"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"></Button>
 
 </LinearLayout>

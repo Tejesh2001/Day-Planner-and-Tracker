@@ -9,8 +9,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.LocationListener;
-import android.media.AudioTrack;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
@@ -34,18 +33,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-//1.
-//2. Add polylines ( I know how to do just need to save the states
-//3. After a day passes the lines get drawn automatically. So after each day the lines drawn are shown.
-
 public class MainActivity extends AppCompatActivity {
     // private EditText location;
     // private Button club, eat, festival, social, acad;
-    private final String LOG_TAG = "MainActivity";
+    // private final String LOG_TAG = "MainActivity";
 
     private PlacesClient client;
     private List<LatLng> locations = new ArrayList<>();
     private List<Position> positions = new ArrayList<>();
+    private double currentLat;
+    private double currentLng;
 
     private final int PERMISSION_FINE_LOCATION_ACCESS = 1;
     private boolean hasLocationAccess;
@@ -56,11 +53,66 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         PointsGraphSeries series = new PointsGraphSeries<>();
-
+        Gson gson = new Gson();
         Intent intentMap = new Intent(this, MapsActivity.class);
 
         setContentView(R.layout.activity_main);
 
+
+        hasLocationAccess = (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED);
+        // Requesting location access
+        if (!hasLocationAccess) {
+            // No explanation needed; request the permission
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSION_FINE_LOCATION_ACCESS);
+        }
+
+        locationGetter();
+
+        String key = "AIzaSyC1__M1ff-99MrCEfi0B0CB6PByZi3AJOg";
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), key);
+        }
+        client = Places.createClient(this);
+        final AutocompleteSupportFragment autocompleteSupportFragment =
+                (AutocompleteSupportFragment) getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME));
+        autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                LatLng location = place.getLatLng();
+
+                intentMap.putExtra("Latitude", location.latitude);
+                intentMap.putExtra("Longitude", location.longitude);
+
+
+                locations.add(location);
+                positions.add(new Position(location));
+                String locater = gson.toJson(locations);
+                intentMap.putExtra("locations", locater);
+                if (hasLocationAccess) {
+                    intentMap.putExtra("currentLat", currentLat);
+                    intentMap.putExtra("currentLng", currentLng);
+                }
+
+                startActivityForResult(intentMap, MARKER_SELECTION_REQUEST);
+            }
+
+            @Override
+            public void onError(@NonNull Status status) {
+                Log.e("Error in status", " Error in getting status");
+            }
+        });
+
+        Button viewMap = findViewById(R.id.viewMap);
+        viewMap.setOnClickListener(unused -> {
+            String locater = gson.toJson(locations);
+            intentMap.putExtra("locations", locater);
+            startActivityForResult(intentMap, MARKER_SELECTION_REQUEST);
+        });
 
         Button club = findViewById(R.id.Clubbing);
         club.setOnClickListener(unused -> {
@@ -117,9 +169,6 @@ public class MainActivity extends AppCompatActivity {
                 renderGraph();
             }
         });
-
-        //init();
-        //renderGraph();
     }
 
     private void renderGraph() {
@@ -166,132 +215,6 @@ public class MainActivity extends AppCompatActivity {
         graph.getViewport().setMinX(0);
     }
 
-//    private void init(){
-//        series = new BarGraphSeries<>();
-//        Button club = findViewById(R.id.Clubbing);
-//        club.setOnClickListener(v -> {
-//            a++;
-//            xy.add(new values(1, a));
-//            init();
-//
-//        });
-//
-//        Button eat = findViewById(R.id.eat);
-//        eat.setOnClickListener(v -> {
-//            b++;
-//            xy.add(new values(2, b));
-//
-//            init();
-//            // series.appendData(new DataPoint(1, b), true, 31);
-//            //startActivity(intent);
-//        });
-//
-//        Button festival = findViewById(R.id.festival);
-//        festival.setOnClickListener(v -> {
-//            c++;
-//            xy.add(new values(3, c));
-//            init();
-//            // series.appendData(new DataPoint(2, c), true, 31);
-//            //startActivity(intent);
-//        });
-//
-//        Button social = findViewById(R.id.socializing);
-//        social.setOnClickListener(v -> {
-//            d++;
-//            xy.add(new values(4, d));
-//            init();
-//            //startActivity(intent);
-//
-//        });
-//
-//        Button acad = findViewById(R.id.Academics);
-//        acad.setOnClickListener(v -> {
-//            e++;
-//            xy.add(new values(5, e));
-//            init();
-//        });
-//
-//        if (xy == null) {
-//            return;
-//        }
-//        xy = sort(xy);
-//        for (int i = 0; i < xy.size(); i++) {
-//
-//            double x = xy.get(i).getX();
-//            double y = xy.get(i).getY();
-//            series.appendData(new DataPoint(x, y), true, 1000);
-//        }
-//        //set some properties
-//        series.setShape(PointsGraphSeries.Shape.RECTANGLE);
-//        series.setSize(20f);
-//        GraphView graphView = findViewById(R.id.graphnew);
-//
-//
-//        //set Scrollable and Scaleable
-//        graphView.getViewport().setScalable(true);
-//        graphView.getViewport().setScalableY(true);
-//        graphView.getViewport().setScrollable(true);
-//        graphView.getViewport().setScrollableY(true);
-//
-//        //set manual x bounds
-//        graphView.getViewport().setYAxisBoundsManual(true);
-//        graphView.getViewport().setMaxY(50);
-//        graphView.getViewport().setMinY(0);
-//
-//        //set manual y bounds
-//        graphView.getViewport().setXAxisBoundsManual(true);
-//        graphView.getViewport().setMaxX(6);
-//        graphView.getViewport().setMinX(0);
-//
-//        graphView.addSeries(series);
-//        //String s = i.getStringExtra("Series");
-//        //BarGraphSeries ob = g.fromJson(s, BarGraphSeries.class);
-//
-//        //graphView.addSeries(ob);
-//    }
-
-    private ArrayList<values> sort(ArrayList<values> array) {
-        int factor = Integer.parseInt(String.valueOf(Math.round(Math.pow(array.size(), 2))));
-        int m = array.size() - 1;
-        int count = 0;
-        while (true) {
-            m--;
-            if (m <= 0) {
-                m = array.size() - 1;
-            }
-            try {
-                //print out the y entrys so we know what the order looks like
-                //Log.d(TAG, "sortArray: Order:");
-                //for(int n = 0;n < array.size();n++){
-                //Log.d(TAG, "sortArray: " + array.get(n).getY());
-                //}
-                double tempY = array.get(m - 1).getY();
-                double tempX = array.get(m - 1).getX();
-                if (tempX > array.get(m).getX()) {
-                    array.get(m - 1).setY(array.get(m).getY());
-                    array.get(m).setY(tempY);
-                    array.get(m - 1).setX(array.get(m).getX());
-                    array.get(m).setX(tempX);
-                } else if (tempX == array.get(m).getX()) {
-                    count++;
-                    // Log.d(TAG, "sortArray: count = " + count);
-                } else if (array.get(m).getX() > array.get(m - 1).getX()) {
-                    count++;
-                    //Log.d(TAG, "sortArray: count = " + count);
-                }
-                //break when factorial is done
-                if (count == factor) {
-                    break;
-                }
-            } catch (ArrayIndexOutOfBoundsException e) {
-                //Log.e(TAG, "sortArray: ArrayIndexOutOfBoundsException. Need more than 1 data point to create Plot." +
-                //     e.getMessage());
-                break;
-            }
-        }
-        return array;
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
@@ -323,5 +246,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Used to acquire the user's current location.
+     */
+    private void locationGetter() {
+        CurrentLocationGetter.LocationResult locationResult = new CurrentLocationGetter.LocationResult() {
+            @Override
+            public void gotLocation(Location location) {
+                //Got the location!
+                currentLat = location.getLatitude();
+                currentLng = location.getLongitude();
+            }
+        };
+        CurrentLocationGetter myLocation = new CurrentLocationGetter();
+        myLocation.getLocation(this, locationResult);
+    }
 
 }

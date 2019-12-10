@@ -22,17 +22,11 @@ public class Launch extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
-        Button map = findViewById(R.id.mapbutton);
-        Button graph = findViewById(R.id.Graph);
-        map.setOnClickListener(v ->
-                startActivity(new Intent(this, Search.class)));
-        graph.setOnClickListener(v ->
-                startActivity(new Intent(this, MainActivity.class)));
-
-
-
-
-
+        Button start = findViewById(R.id.startMain);
+        start.setOnClickListener(v -> {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        });
     }
 
 }
