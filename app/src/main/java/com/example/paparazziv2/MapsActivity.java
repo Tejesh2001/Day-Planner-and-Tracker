@@ -106,45 +106,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         }
 
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-//        StringRequest stringRequest = new StringRequest(Request.Method.GET, "https://cs125-cloud.cs.illinois.edu/Fall2019-MP/presets/",
-//                new Response.Listener<String>() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        JsonParser ob = new JsonParser();
-//                        JsonElement element = ob.parse(response);
-//                        JsonObject jsonObject = element.getAsJsonObject();
-//
-//                        JsonArray presets = jsonObject.get("presets").getAsJsonArray();
-//                        JsonElement campus = presets.get(1);
-//                        JsonArray loc = campus.getAsJsonObject().get("targets").getAsJsonArray();
-//
-//                        for (JsonElement i : loc) {
-//
-//                            if (searchKey.equals(i.getAsJsonObject().get("note").getAsString())) {
-//                                System.out.println(searchKey + "     Location found");
-//                                position = new LatLng(i.getAsJsonObject().get("latitude").getAsDouble(),
-//                                        i.getAsJsonObject().get("longitude").getAsDouble());
-//                                options = new MarkerOptions().position(position);
-//                                mMap.addMarker(options);
-//
-//                                mMap.moveCamera(CameraUpdateFactory.newLatLng(position));
-//                            }
-//                        }
-//                    }
-//                }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//
-//            }
-//        });
-//        requestQueue.add(stringRequest);
 
         if (currentPosition != null) {
             MarkerOptions currentOption = new MarkerOptions().position(currentPosition)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
             mMap.addMarker(currentOption);
+
+                mMap.addPolyline(new PolylineOptions().add(currentPosition, locatorsList.get(0)));
+            
         }
     }
 

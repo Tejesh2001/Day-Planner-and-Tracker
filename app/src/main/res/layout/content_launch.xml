@@ -15,8 +15,8 @@
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="264dp"
         android:layout_height="58dp"
-        android:background="#00FFFFFF"
-        android:text="Start Recording!"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"></Button>
+        android:background="@color/quantum_amber300"
+        android:text="Start Tracking!"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"></Button>
 
 </LinearLayout>
